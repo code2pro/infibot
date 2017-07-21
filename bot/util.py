@@ -4,6 +4,8 @@ from validate_email import validate_email
 from bot.storage import EphemeralStore
 from bot.config import botcfg
 
+LOG_CATEGORY = 'VSLBOT.UTIL'
+
 class User(object):
     def __init__(self, first_name, last_name):
         self.first_name = first_name
@@ -31,9 +33,14 @@ def get_bot():
 
 
 def set_webhook():
+    logger = get_logger(LOG_CATEGORY)
     bot = get_bot()
-    bot.remove_webhook()
-    bot.set_webhook(url=botcfg['TELEBOT_WEBHOOK_URL'])
+    wh_info = bot.get_webhook_info()
+    logger.info('set_webhook: Web Hook Info = %s' % wh_info)
+    if wh_info.url != botcfg['TELEBOT_WEBHOOK_URL']:
+        logger.info('set_webhook: Previous webhook URL was %s' % wh_info.url)
+        bot.remove_webhook()
+        bot.set_webhook(url=botcfg['TELEBOT_WEBHOOK_URL'])
 
 
 def get_logger(log_category):
