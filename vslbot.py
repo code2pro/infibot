@@ -24,6 +24,7 @@ Explore our activities, events and mussings:
 2. Medium: https://medium.com/vietstartup-london
 3. Open Projects: https://trello.com/b/ODvtUhBf/vietstartup
 4. For Developers: https://github.com/VietStartupLondon
+5. Website: http://www.vietstartup.co.uk/
 """
 
 logger = util.get_logger(LOG_CATEGORY)
