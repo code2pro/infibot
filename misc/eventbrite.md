@@ -16,6 +16,12 @@ https://www.eventbriteapi.com/v3/organizers/14646693153/events/?status=live%2Cen
 
 https://www.eventbrite.com/developer/v3/response_formats/event/
 
+https://docs.python.org/2/library/datetime.html
+
+https://stackoverflow.com/questions/4770297/python-convert-utc-datetime-string-to-local-datetime
+
+http://docs.python-requests.org/en/master/user/quickstart/#make-a-request
+
 ```
 {
     "pagination": {
