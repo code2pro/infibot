@@ -1,4 +1,4 @@
-import logging, telebot, requests
+import logging, telebot, requests, json
 from validate_email import validate_email
 from functools import wraps
 from datetime import datetime
@@ -125,3 +125,73 @@ def get_events():
     events = resp['events']
     logger.info("get_events: JSON Events = %s" % events)
     return evbrite_to_local_event(events)
+
+
+def get_mailerlite_headers():
+    return {
+        'content-type': 'application/json',
+        'x-mailerlite-apikey': botcfg['MAILER_LITE_API_KEY'],
+    }
+
+
+def get_user_groups(email):
+    '''Get all groups the user has subscribed to'''
+    headers = get_mailerlite_headers()
+    url = botcfg['MAILER_LITE_USER_GROUPS_TMPL'] % email.strip().lower()
+    r = requests.get(url, headers=headers)
+    resp = r.json()
+    if r.status_code != 200:
+        error = resp['error']
+        logger.error("get_user_groups: Got error when querying URL '%s' [status_code=%d,error_code=%d,error_description=%s]" % (
+            r.url, r.status_code, error['code'], error['message']
+        ))
+        return None
+    logger.info("get_user_groups: JSON Groups = %s" % resp)
+    return resp
+
+
+def is_user_subscribed_gid(email, group_id):
+    '''Check if the user is already subscribed to mail list with specified ID'''
+    groups = get_user_groups(email)
+    if not groups:
+        return False
+    def cond(group):
+        logger.info("is_user_subscribed_gid: cond => group = %s" % group)
+        return (group['id'] == group_id and not group['unsubscribed'])
+    target_groups = [group['id'] for group in groups if cond(group)]
+    logger.info("is_user_subscribed_gid: target_groups = %s" % target_groups)
+    if target_groups != [group_id]:
+        return False
+    return True
+
+
+def is_user_subscribed(email):
+    '''Check if the user is already subscribed to mail list'''
+    return is_user_subscribed_gid(email, botcfg['MAILER_LITE_GROUPID'])
+
+
+def subscribe_user_gid(user, group_id):
+    '''Subscribe the user to a specified group ID'''
+    headers = get_mailerlite_headers()
+    url = botcfg['MAILER_LITE_GROUP_SUB_TMPL'] % group_id
+    data = {
+        'name'      : user.first_name,
+        'last_name' : user.last_name,
+        'email'     : user.email,
+    }
+    payload = json.dumps(data)
+    r = requests.post(url, headers=headers, data=payload)
+    resp = r.json()
+    if r.status_code != 200:
+        error = resp['error']
+        logger.error("subscribe_user_gid: Got error when querying URL '%s' [status_code=%d,error_code=%d,error_description=%s]" % (
+            r.url, r.status_code, error['code'], error['message']
+        ))
+        return None
+    logger.info("get_user_groups: JSON Subscribe user = %s" % resp)
+    return True
+
+
+def subscribe_user(user):
+    '''Subscribe the user to the default group'''
+    return subscribe_user_gid(user, botcfg['MAILER_LITE_GROUPID'])

@@ -21,6 +21,7 @@ import requests, json
 
 MAILER_LITE_API_PREFIX = "https://api.mailerlite.com/api/v2"
 MAILER_LITE_GROUP_SUB = "/groups/%s/subscribers" % MAILER_LITE_GROUP_ID
+MAILER_LITE_USER_GROUPS = "/subscribers/%s/groups" % email
 
 url = "%s%s" % (MAILER_LITE_API_PREFIX, MAILER_LITE_GROUP_SUB)
 
