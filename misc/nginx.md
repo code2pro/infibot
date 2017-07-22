@@ -31,3 +31,4 @@ virtualenv -p python3 venv
 * https://help.ubuntu.com/lts/serverguide/firewall.html
 * https://db-ip.com/all/149.154.167
 * http://docs.gunicorn.org/en/stable/settings.html#errorlog
+* https://stackoverflow.com/questions/42190984/dyld-library-not-loaded-error-preventing-virtualenv-from-loading
