@@ -66,8 +66,15 @@ def handle_events(message):
     '''List events by the organisation'''
     bot.send_chat_action(message.chat.id, 'typing')
     events = util.get_events()
-    logger.info("handle_events: Events = %s" % events)
-    bot.send_message(message.chat.id, "Events: %s" % events)
+    if not events:
+        bot.send_message(message.chat.id, "Hey! We don't have events yet. Feel free to check again.")
+    else:
+        output = ""
+        for event in events:
+            output += "* %s\n%s\n%s\n----\n" % (
+                event.name, event.time.strftime("%I:%M%p %a, %b %d %Y"),
+                event.url)
+        bot.send_message(message.chat.id, "Our events:\n%s" % output)
 
 
 @bot.message_handler(func=lambda message: True)
