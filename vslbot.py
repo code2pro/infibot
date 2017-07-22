@@ -56,9 +56,17 @@ def guess_fname(message):
 
 @bot.message_handler(commands=['about', 'intro', 'aboutus'])
 def handle_aboutus(message):
-    '''Introduce VSL to the world'''
+    '''Introduce the organisation to the world'''
     fname = guess_fname(message)
     bot.send_message(message.chat.id, ABOUTUS_MSG % fname)
+
+
+@bot.message_handler(commands=['event', 'events'])
+def handle_events(message):
+    '''List events by the organisation'''
+    events = util.get_events()
+    logger.info("handle_events: Events = %s" % events)
+    bot.send_message(message.chat.id, "Events: %s" % events)
 
 
 @bot.message_handler(func=lambda message: True)
