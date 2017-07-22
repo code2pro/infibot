@@ -93,6 +93,18 @@ def get_session_storage():
     return UserSession(ns='sessions', prefix='u', expire=180)
 
 
+def evbrite_to_local_event(events):
+    ret_events = []
+    for event in events:
+        ev_name = event['name']['text']
+        # Format: 2017-08-11T09:00:00
+        ev_time = datetime.strptime(event['start']['local'], '%Y-%m-%dT%H:%M:%S')
+        ev_url = event['vanity_url'] if 'vanity_url' in event else event['url']
+        ret_event = Event(name=ev_name, time=ev_time, url=ev_url)
+        ret_events.append(ret_event)
+    return ret_events
+
+
 def get_events():
     '''Returns Live, Started, Ended, and Completed events'''
     EVBRITE_PREFIX = botcfg['EVBRITE_PREFIX']
@@ -112,12 +124,4 @@ def get_events():
         return None
     events = resp['events']
     logger.info("get_events: JSON Events = %s" % events)
-    ret_events = []
-    for event in events:
-        ev_name = event['name']['text']
-        # Format: 2017-08-11T09:00:00
-        ev_time = datetime.strptime(event['start']['local'], '%Y-%m-%dT%H:%M:%S')
-        ev_url = event['vanity_url'] if 'vanity_url' in event else event['url']
-        ret_event = Event(name=ev_name, time=ev_time, url=ev_url)
-        ret_events.append(ret_event)
-    return ret_events
+    return evbrite_to_local_event(events)
