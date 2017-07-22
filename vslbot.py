@@ -11,7 +11,6 @@ INTRO_MSG = """Hi %s, I'm a bot from VietStartupLondon.
 Here are the commands:
 /about: Discover our community and fun projects
 /events: Query upcoming and past events
-/stop: Bot will stop asking you questions
 """
 ABOUTUS_MSG = """
 Hello %s, we are VietStartupLondon, a vibrant community of young Viet professionals in London.
@@ -53,16 +52,6 @@ def guess_fname(message):
         return message.chat.first_name
     else:
         return "there"
-
-
-@bot.message_handler(commands=['stop', 'clean'])
-def handle_stop(message):
-    '''Stop any pending queries and clear any inline keyboards'''
-    chat_id = message.chat.id
-    if chat_id in sessions:
-        del sessions[chat_id]
-    keyboard = ReplyKeyboardRemove()
-    bot.send_message(message.chat.id, 'Talk to you soon!', reply_markup=keyboard)
 
 
 @bot.message_handler(commands=['about', 'intro', 'aboutus'])
