@@ -64,6 +64,7 @@ def handle_aboutus(message):
 @bot.message_handler(commands=['event', 'events'])
 def handle_events(message):
     '''List events by the organisation'''
+    bot.send_chat_action(message.chat.id, 'typing')
     events = util.get_events()
     logger.info("handle_events: Events = %s" % events)
     bot.send_message(message.chat.id, "Events: %s" % events)
