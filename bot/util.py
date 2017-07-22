@@ -29,11 +29,23 @@ class UserSession(EphemeralStore):
         return user
 
 
+def return_on_stop(f):
+    '''Stop the current chatbot flow/session on /stop or /clear'''
+    @wraps(f)
+    def wrapper(message, *args, **kwds):
+        if message.text.strip().lower() in ['/stop', '/clean']:
+            return False
+        return f(message, *args, **kwds)
+    return wrapper
+
+
 def get_bot():
+    '''Return the Telegram bot with token is drawn from config'''
     return telebot.TeleBot(botcfg['TELEGRAM_TOKEN'])
 
 
 def set_webhook():
+    '''Set webhook URL if the current URL is outdated'''
     logger = get_logger(LOG_CATEGORY)
     bot = get_bot()
     wh_info = bot.get_webhook_info()
@@ -65,11 +77,3 @@ def check_email(email):
 def get_session_storage():
     '''Return an ephemeral storage for sessions'''
     return UserSession(ns='sessions', prefix='u', expire=180)
-
-def return_on_stop(f):
-    @wraps(f)
-    def wrapper(message, *args, **kwds):
-        if message.text.strip().lower() in ['/stop', '/clean']:
-            return False
-        return f(message, *args, **kwds)
-    return wrapper
