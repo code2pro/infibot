@@ -9,6 +9,7 @@ LOG_CATEGORY = 'VSLBOT.MAIN'
 TELEBOT_WH_PATH = '/%s' % botcfg['TELEBOT_WH_PATH']
 INTRO_MSG = """Hi %s, I'm a bot from VietStartupLondon.
 Here are the commands:
+/start: Show this message
 /about: Discover our community and fun projects
 /events: Query upcoming and past events
 /member: Subscribe to our upcoming events and news
@@ -55,7 +56,15 @@ def guess_fname(message):
         return "there"
 
 
-@bot.message_handler(commands=['about', 'intro', 'aboutus'])
+@bot.message_handler(commands=['intro', 'start', 'help'])
+def handle_aboutus(message):
+    '''Introduce the organisation to the world'''
+    fname = guess_fname(message)
+    bot.send_message(message.chat.id, INTRO_MSG % fname)
+    del sessions[message.chat.id]
+
+
+@bot.message_handler(commands=['about', 'aboutus'])
 def handle_aboutus(message):
     '''Introduce the organisation to the world'''
     fname = guess_fname(message)
@@ -123,9 +132,10 @@ def process_email_step(message):
         if util.is_user_subscribed(email):
             bot.send_message(chat_id,
                 "Thanks %s! Here's news: You are already registered with the email %s" % (
-                user.first_name, user.emai))
+                user.first_name, email))
             # Session is done, clean up
             del sessions[chat_id]
+            return True
         # If the email is not registered, proceed
         user.email = email
         # Commit the change

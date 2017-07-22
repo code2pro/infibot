@@ -156,8 +156,10 @@ def is_user_subscribed_gid(email, group_id):
     if not groups:
         return False
     def cond(group):
+        logger.info("is_user_subscribed_gid: cond => group = %s" % group)
         return (group['id'] == group_id and not group['unsubscribed'])
-    target_groups = [group for group in groups if cond(group)]
+    target_groups = [group['id'] for group in groups if cond(group)]
+    logger.info("is_user_subscribed_gid: target_groups = %s" % target_groups)
     if target_groups != [group_id]:
         return False
     return True
