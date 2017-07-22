@@ -30,3 +30,4 @@ virtualenv -p python3 venv
 * https://github.com/SECTHEMALL/log2iptables
 * https://help.ubuntu.com/lts/serverguide/firewall.html
 * https://db-ip.com/all/149.154.167
+* http://docs.gunicorn.org/en/stable/settings.html#errorlog
