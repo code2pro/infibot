@@ -12,6 +12,8 @@ https://www.eventbrite.co.uk/o/london-vietstartup-8609317297
 
 https://www.eventbriteapi.com/v3/organizers/14646693153/events/?token=${EVBRITE_ANON_TOKEN}
 
+https://www.eventbriteapi.com/v3/organizers/14646693153/events/?status=live%2Cended%2Cstarted&order_by=start_desc&token=${EVBRITE_ANON_TOKEN}
+
 https://www.eventbrite.com/developer/v3/response_formats/event/
 
 ```
