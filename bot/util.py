@@ -1,5 +1,6 @@
 import logging, telebot
 from validate_email import validate_email
+from functools import wraps
 
 from bot.storage import EphemeralStore
 from bot.config import botcfg
@@ -64,3 +65,11 @@ def check_email(email):
 def get_session_storage():
     '''Return an ephemeral storage for sessions'''
     return UserSession(ns='sessions', prefix='u', expire=180)
+
+def return_on_stop(f):
+    @wraps(f)
+    def wrapper(message, *args, **kwds):
+        if message.text.strip().lower() in ['/stop', '/clean']:
+            return False
+        return f(message, *args, **kwds)
+    return wrapper

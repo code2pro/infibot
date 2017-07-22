@@ -1,5 +1,4 @@
 import flask, telebot, json, re
-from functools import wraps
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 from telebot.types import ReplyKeyboardMarkup, ReplyKeyboardRemove, KeyboardButton
 
@@ -29,8 +28,6 @@ Explore our activities, events and mussings:
 
 logger = util.get_logger(LOG_CATEGORY)
 sessions = util.get_session_storage()
-pat = re.compile('^\/?(hi|hello|start|ciao|help|hola|ola|all?o)$')
-
 bot = util.get_bot()
 app = flask.Flask(__name__)
 
@@ -75,14 +72,6 @@ def handle_aboutus(message):
     fname = guess_fname(message)
     bot.send_message(message.chat.id, ABOUTUS_MSG % fname)
 
-def return_on_stop(f):
-    @wraps(f)
-    def wrapper(message, *args, **kwds):
-        if message.text.strip().lower() in ['/stop', '/clean']:
-            return False
-        return f(message, *args, **kwds)
-    return wrapper
-
 
 @bot.message_handler(commands=['member'])
 def handle_registration(message):
@@ -98,7 +87,7 @@ def handle_registration(message):
     bot.register_next_step_handler(msg, process_name_step)
 
 
-@return_on_stop
+@util.return_on_stop
 def process_name_step(message):
     chat_id = message.chat.id
     try:
@@ -114,7 +103,7 @@ def process_name_step(message):
         bot.register_next_step_handler(msg, process_name_step)
 
 
-@return_on_stop
+@util.return_on_stop
 def process_email_step(message):
     chat_id = message.chat.id
     try:
