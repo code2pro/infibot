@@ -3,7 +3,7 @@
 from vslbot import app
 from bot import util
 
-util.set_webhook()
-
 if __name__ == "__main__":
+    util.set_webhook()
+
     app.run()
