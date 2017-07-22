@@ -1,6 +1,8 @@
 #!/bin/bash -x
 
-LOG_SUFFIX=$(date +%Y%m%d_%H%M%S)
+if [ -z ${LOG_SUFFIX} ]; then
+    LOG_SUFFIX=$(date +%Y%m%d_%H%M%S)
+fi
 VSLBOT_ACCESS_LOG=${VSLBOT_ACCESS_LOG}.${LOG_SUFFIX}
 VSLBOT_ERROR_LOG=${VSLBOT_ERROR_LOG}.${LOG_SUFFIX}
 
