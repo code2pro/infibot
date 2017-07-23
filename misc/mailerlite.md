@@ -1,3 +1,6 @@
+https://app.mailerlite.com/configuration/subscribe
+http://help.mailerlite.com/article/show/29273-double-opt-in-for-api
+
 http://developers.mailerlite.com/reference#add-single-subscriber
 
 https://stackoverflow.com/questions/42190984/dyld-library-not-loaded-error-preventing-virtualenv-from-loading
