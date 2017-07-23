@@ -1,6 +1,9 @@
 import requests
-from bot.config import botcfg
 from bot.logger import get_logger
+
+MAILER_LITE_API_PREFIX = "https://api.mailerlite.com/api/v2"
+MAILER_LITE_GROUP_SUB_TMPL = MAILER_LITE_API_PREFIX + "/groups/%s/subscribers"
+MAILER_LITE_USER_GROUPS_TMPL = MAILER_LITE_API_PREFIX + "/subscribers/%s/groups"
 
 LOG_CATEGORY = 'VSLBOT.UTIL'
 logger = get_logger(LOG_CATEGORY)
@@ -19,7 +22,7 @@ class MailerLite(object):
     def get_user_groups(self, email):
         '''Get all groups the user has subscribed to'''
         headers = self.get_headers()
-        url = botcfg['MAILER_LITE_USER_GROUPS_TMPL'] % email.strip().lower()
+        url = MAILER_LITE_USER_GROUPS_TMPL % email.strip().lower()
         r = requests.get(url, headers=headers)
         resp = r.json()
         if r.status_code != 200:
@@ -52,7 +55,7 @@ class MailerLite(object):
     def subscribe_user_gid(self, user, group_id):
         '''Subscribe the user to a specified group ID'''
         headers = self.get_headers()
-        url = botcfg['MAILER_LITE_GROUP_SUB_TMPL'] % group_id
+        url = MAILER_LITE_GROUP_SUB_TMPL % group_id
         data = {
             'name'      : user.first_name,
             'last_name' : user.last_name,
