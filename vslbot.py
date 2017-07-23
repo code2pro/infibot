@@ -104,7 +104,11 @@ def handle_registration(message):
     chat_id = message.chat.id
     if chat_id in sessions:
         return False
-    sessions[chat_id] = util.User(message.chat.first_name, message.chat.last_name)
+    user_id = None
+    if message.from_user:
+        user_id = message.from_user.id
+    sessions[chat_id] = util.User(
+        message.chat.first_name, message.chat.last_name, user_id)
     fname = 'there'
     if message.chat.first_name:
         fname = message.chat.first_name

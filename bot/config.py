@@ -27,7 +27,7 @@ for var in SUPP_MAILING_BACKENDS[botcfg['MAILING_BACKEND']]:
     else:
         raise Exception('Missing env var %s' % var)
 
-for var in ['MAILER_LITE_GROUPID', 'MAILCHIMP_GROUPID']:
+for var in ['MAILER_LITE_GROUPID']:
     if var in botcfg:
         botcfg[var] = int(botcfg[var])
 

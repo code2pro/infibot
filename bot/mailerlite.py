@@ -1,4 +1,4 @@
-import requests
+import requests, json
 from bot.logger import get_logger
 
 MAILER_LITE_API_PREFIX = "https://api.mailerlite.com/api/v2"
@@ -27,7 +27,7 @@ class MailerLite(object):
         resp = r.json()
         if r.status_code != 200:
             error = resp['error']
-            logger.error("get_user_groups: Got error when querying URL '%s' [status_code=%d,error_code=%d,error_description=%s]" % (
+            logger.error("get_user_groups: Got error when querying URL '%s' [status_code=%d,error_code=%d,error_description='%s']" % (
                 r.url, r.status_code, error['code'], error['message']
             ))
             return None

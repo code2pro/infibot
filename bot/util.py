@@ -25,9 +25,10 @@ logger = get_logger(LOG_CATEGORY)
 mail_backend = get_mail_backend()
 
 class User(object):
-    def __init__(self, first_name, last_name):
+    def __init__(self, first_name, last_name, orig_id):
         self.first_name = first_name
         self.last_name = last_name
+        self.orig_id = orig_id
 
 
 class UserSession(EphemeralStore):
@@ -42,7 +43,10 @@ class UserSession(EphemeralStore):
         if not val:
             return None
         # TODO: Fix the Bytes vs String issue
-        user = User(val[b'first_name'].decode('utf-8'), val[b'last_name'].decode('utf-8'))
+        user = User(
+            val[b'first_name'].decode('utf-8'),
+            val[b'last_name'].decode('utf-8'),
+            val[b'orig_id'].decode('utf-8'))
         return user
 
 
