@@ -4,6 +4,7 @@ from telebot.types import ReplyKeyboardMarkup, ReplyKeyboardRemove, KeyboardButt
 
 from bot.config import botcfg
 from bot import util
+from bot.logger import get_logger
 
 LOG_CATEGORY = 'VSLBOT.MAIN'
 TELEBOT_WH_PATH = '/%s' % botcfg['TELEBOT_WH_PATH']
@@ -27,7 +28,7 @@ Explore our activities, events and mussings:
 5. Website: http://www.vietstartup.co.uk/
 """
 
-logger = util.get_logger(LOG_CATEGORY)
+logger = get_logger(LOG_CATEGORY)
 sessions = util.get_session_storage()
 bot = util.get_bot()
 app = flask.Flask(__name__)

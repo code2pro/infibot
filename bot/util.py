@@ -1,29 +1,28 @@
-import logging, telebot, requests, json
+import telebot, requests, json
 from validate_email import validate_email
 from functools import wraps
 from datetime import datetime
 
 from bot.storage import EphemeralStore
 from bot.config import botcfg
+from bot.mailchimp import MailChimp
+from bot.mailerlite import MailerLite
+from bot.logger import get_logger
 
 LOG_CATEGORY = 'VSLBOT.UTIL'
 
 
-def get_logger(log_category):
-    '''Return logger with specified log category'''
-    FORMAT = '%(asctime)s.%(msecs)03d:%(process)d:%(thread)d %(name)s %(levelname)s %(filename)s:%(lineno)d: %(message)s'
-    DATE_FORMAT = '%Y-%m-%d_%H:%M:%S'
-    formatter = logging.Formatter(fmt=FORMAT, datefmt=DATE_FORMAT)
-    handler = logging.StreamHandler()
-    handler.setFormatter(formatter)
-    logger = logging.getLogger(log_category)
-    logger.addHandler(handler)
-    logger.setLevel(logging.INFO)
-    return logger
+def get_mail_backend():
+    if botcfg['MAILING_BACKEND'] == 'MAILER_LITE':
+        return MailerLite(apikey=botcfg['MAILER_LITE_API_KEY'],
+            group_id=botcfg['MAILER_LITE_GROUPID'])
+    elif botcfg['MAILING_BACKEND'] == 'MAILCHIMP':
+        return MailChimp(apikey=botcfg['MAILCHIMP_API_KEY'],
+            group_id=botcfg['MAILCHIMP_GROUPID'])
 
 
 logger = get_logger(LOG_CATEGORY)
-
+mail_backend = get_mail_backend()
 
 class User(object):
     def __init__(self, first_name, last_name):
@@ -127,71 +126,11 @@ def get_events():
     return evbrite_to_local_event(events)
 
 
-def get_mailerlite_headers():
-    return {
-        'content-type': 'application/json',
-        'x-mailerlite-apikey': botcfg['MAILER_LITE_API_KEY'],
-    }
-
-
-def get_user_groups(email):
-    '''Get all groups the user has subscribed to'''
-    headers = get_mailerlite_headers()
-    url = botcfg['MAILER_LITE_USER_GROUPS_TMPL'] % email.strip().lower()
-    r = requests.get(url, headers=headers)
-    resp = r.json()
-    if r.status_code != 200:
-        error = resp['error']
-        logger.error("get_user_groups: Got error when querying URL '%s' [status_code=%d,error_code=%d,error_description=%s]" % (
-            r.url, r.status_code, error['code'], error['message']
-        ))
-        return None
-    logger.info("get_user_groups: JSON Groups = %s" % resp)
-    return resp
-
-
-def is_user_subscribed_gid(email, group_id):
-    '''Check if the user is already subscribed to mail list with specified ID'''
-    groups = get_user_groups(email)
-    if not groups:
-        return False
-    def cond(group):
-        logger.info("is_user_subscribed_gid: cond => group = %s" % group)
-        return (group['id'] == group_id and not group['unsubscribed'])
-    target_groups = [group['id'] for group in groups if cond(group)]
-    logger.info("is_user_subscribed_gid: target_groups = %s" % target_groups)
-    if target_groups != [group_id]:
-        return False
-    return True
-
-
 def is_user_subscribed(email):
     '''Check if the user is already subscribed to mail list'''
-    return is_user_subscribed_gid(email, botcfg['MAILER_LITE_GROUPID'])
-
-
-def subscribe_user_gid(user, group_id):
-    '''Subscribe the user to a specified group ID'''
-    headers = get_mailerlite_headers()
-    url = botcfg['MAILER_LITE_GROUP_SUB_TMPL'] % group_id
-    data = {
-        'name'      : user.first_name,
-        'last_name' : user.last_name,
-        'email'     : user.email,
-    }
-    payload = json.dumps(data)
-    r = requests.post(url, headers=headers, data=payload)
-    resp = r.json()
-    if r.status_code != 200:
-        error = resp['error']
-        logger.error("subscribe_user_gid: Got error when querying URL '%s' [status_code=%d,error_code=%d,error_description=%s]" % (
-            r.url, r.status_code, error['code'], error['message']
-        ))
-        return None
-    logger.info("get_user_groups: JSON Subscribe user = %s" % resp)
-    return True
+    return mail_backend.is_user_subscribed(email)
 
 
 def subscribe_user(user):
     '''Subscribe the user to the default group'''
-    return subscribe_user_gid(user, botcfg['MAILER_LITE_GROUPID'])
+    return mail_backend.subscribe_user(user)

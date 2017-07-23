@@ -21,9 +21,7 @@ for var in EXPECTED_ENVS:
 if botcfg['MAILING_BACKEND'] not in SUPP_MAILING_BACKENDS:
     raise Exception('Currently supporting only %s' % list(SUPP_MAILING_BACKENDS.keys()))
 
-MAILING_BACKEND = botcfg['MAILING_BACKEND']
-
-for var in SUPP_MAILING_BACKENDS[MAILING_BACKEND]:
+for var in SUPP_MAILING_BACKENDS[botcfg['MAILING_BACKEND']]:
     if var in os.environ:
         botcfg[var] = os.environ[var]
     else:
