@@ -1,4 +1,4 @@
-import flask, telebot, json, re
+import flask, telebot, json, requests
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 from telebot.types import ReplyKeyboardMarkup, ReplyKeyboardRemove, KeyboardButton
 
@@ -8,6 +8,7 @@ from bot.logger import get_logger
 
 LOG_CATEGORY = 'VSLBOT.MAIN'
 TELEBOT_WH_PATH = '/%s' % botcfg['TELEBOT_WH_PATH']
+FB_WH_PATH = '/%s' % botcfg['FB_WH_PATH']
 INTRO_MSG = """Hi %s, I'm a bot from VietStartupLondon.
 Here are the commands:
 /start: Show this message
@@ -39,8 +40,48 @@ def index():
     return ''
 
 
+################################################################
+## Specific to FB Messenger bot
+################################################################
+
+
+@app.route(FB_WH_PATH, methods=['GET'])
+def handle_fb_verification():
+    '''Set up webhook to receive FB Messenger messages'''
+    from flask import request, url_for
+    return request.args['hub.challenge']
+
+
+def reply_fb_message(user_id, msg):
+    '''Reply to FB Messenger messages'''
+    data = {
+        "recipient" : {"id": user_id},
+        "message"   : {"text": msg},
+    }
+    resp = requests.post(
+        "https://graph.facebook.com/v2.10/me/messages?access_token=%s" % botcfg['FB_PAGE_ACCESS_TOKEN'],
+        json=data)
+    logger.info("reply_fb_message: resp = %s" % resp)
+
+
+@app.route(FB_WH_PATH, methods=['POST'])
+def handle_fb_incoming_messages():
+    '''Handle incoming messages from FB Messenger'''
+    from flask import request, url_for
+    data = request.json
+    sender = data['entry'][0]['messaging'][0]['sender']['id']
+    message = data['entry'][0]['messaging'][0]['message']['text']
+    reply_fb_message(sender, message[::-1])
+    # Need to return 200 OK
+    return ''
+
+################################################################
+## Specific to Telegram bot
+################################################################
+
 @app.route(TELEBOT_WH_PATH, methods=['POST'])
-def webhook():
+def telegram_webhook():
+    '''Set up webhook to receive Telegram messages'''
     if flask.request.headers.get('content-type') == 'application/json':
         json_string = flask.request.get_data().decode('utf-8')
         update = telebot.types.Update.de_json(json_string)
