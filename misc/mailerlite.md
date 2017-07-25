@@ -1,5 +1,6 @@
 https://app.mailerlite.com/configuration/subscribe
 http://help.mailerlite.com/article/show/29273-double-opt-in-for-api
+https://app.mailerlite.com/subscribers/custom_fields/${MAILER_LITE_GROUP_ID}
 
 http://developers.mailerlite.com/reference#add-single-subscriber
 
