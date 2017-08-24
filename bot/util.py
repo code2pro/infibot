@@ -1,4 +1,4 @@
-import telebot, requests, json
+import telebot, requests
 from validate_email import validate_email
 from functools import wraps
 from datetime import datetime

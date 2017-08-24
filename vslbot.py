@@ -1,6 +1,6 @@
-import flask, telebot, json, requests
-from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
-from telebot.types import ReplyKeyboardMarkup, ReplyKeyboardRemove, KeyboardButton
+import flask, telebot, requests
+from telebot.types import InlineKeyboardButton
+from telebot.types import ReplyKeyboardRemove, KeyboardButton
 
 from bot.config import botcfg
 from bot import util
@@ -48,7 +48,7 @@ def index():
 @app.route(FB_WH_PATH, methods=['GET'])
 def handle_fb_verification():
     '''Set up webhook to receive FB Messenger messages'''
-    from flask import request, url_for
+    from flask import request
     return request.args['hub.challenge']
 
 
@@ -67,7 +67,7 @@ def reply_fb_message(user_id, msg):
 @app.route(FB_WH_PATH, methods=['POST'])
 def handle_fb_incoming_messages():
     '''Handle incoming messages from FB Messenger'''
-    from flask import request, url_for
+    from flask import request
     data = request.json
     sender = data['entry'][0]['messaging'][0]['sender']['id']
     message = data['entry'][0]['messaging'][0]['message']['text']
@@ -114,14 +114,6 @@ def handle_aboutus(message):
     '''Introduce the organisation to the world'''
     fname = guess_fname(message)
     bot.send_message(message.chat.id, INTRO_MSG % fname)
-    del sessions[message.chat.id]
-
-
-@bot.message_handler(commands=['about', 'aboutus'])
-def handle_aboutus(message):
-    '''Introduce the organisation to the world'''
-    fname = guess_fname(message)
-    bot.send_message(message.chat.id, ABOUTUS_MSG % fname)
 
 
 @bot.message_handler(commands=['event', 'events'])
@@ -198,13 +190,12 @@ def process_email_step(message):
         # Commit the change
         sessions[chat_id] = user
         if not util.subscribe_user(user):
-            bot.send_message(chat_id,
-                "Hey %s, there's a problem and we could not register your email %s."
-                    + " Please try again alter. We are really sorry for the inconvenience." % (
-                        user.first_name, user.email))
+            out_msg = "Hey %s, there's a problem and we could not register your email %s." % (
+                user.first_name, user.email))
+            out_msg += " Please try again later. We are really sorry for the inconvenience."
+            bot.send_message(chat_id, out_msg)
         else:
             bot.send_message(chat_id, 'Nice to meet you, %s. We have recorded your email %s.' % (
-                user.first_name, user.email))
         # Session is done, clean up
         del sessions[chat_id]
     except Exception as e:
