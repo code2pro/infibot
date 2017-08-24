@@ -191,7 +191,7 @@ def process_email_step(message):
         sessions[chat_id] = user
         if not util.subscribe_user(user):
             out_msg = "Hey %s, there's a problem and we could not register your email %s." % (
-                user.first_name, user.email))
+                user.first_name, user.email)
             out_msg += " Please try again later. We are really sorry for the inconvenience."
             bot.send_message(chat_id, out_msg)
         else:
