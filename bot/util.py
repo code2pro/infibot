@@ -9,7 +9,7 @@ from bot.mailchimp import MailChimp
 from bot.mailerlite import MailerLite
 from bot.logger import get_logger
 
-LOG_CATEGORY = 'VSLBOT.UTIL'
+LOG_CATEGORY = 'INFIBOT.UTIL'
 
 
 def get_mail_backend():

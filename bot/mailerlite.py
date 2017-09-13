@@ -5,7 +5,7 @@ MAILER_LITE_API_PREFIX = "https://api.mailerlite.com/api/v2"
 MAILER_LITE_GROUP_SUB_TMPL = MAILER_LITE_API_PREFIX + "/groups/%s/subscribers"
 MAILER_LITE_USER_GROUPS_TMPL = MAILER_LITE_API_PREFIX + "/subscribers/%s/groups"
 
-LOG_CATEGORY = 'VSLBOT.UTIL'
+LOG_CATEGORY = 'INFIBOT.UTIL'
 logger = get_logger(LOG_CATEGORY)
 
 class MailerLite(object):

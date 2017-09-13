@@ -5,7 +5,7 @@ MAILCHIMP_API_PREFIX = "https://%s.api.mailchimp.com/3.0"
 MAILCHIMP_GROUP_SUB_TMPL = "/lists/%s/members"
 MAILCHIMP_USER_GROUPS_TMPL = "/lists/%s/members/%s"
 
-LOG_CATEGORY = 'VSLBOT.UTIL'
+LOG_CATEGORY = 'INFIBOT.UTIL'
 logger = get_logger(LOG_CATEGORY)
 
 

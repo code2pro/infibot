@@ -6,7 +6,7 @@ from bot.config import botcfg
 from bot import util
 from bot.logger import get_logger
 
-LOG_CATEGORY = 'VSLBOT.MAIN'
+LOG_CATEGORY = 'INFIBOT.MAIN'
 TELEBOT_WH_PATH = '/%s' % botcfg['TELEBOT_WH_PATH']
 FB_WH_PATH = '/%s' % botcfg['FB_WH_PATH']
 INTRO_MSG = """Hi %s, I'm a bot from VietStartupLondon.

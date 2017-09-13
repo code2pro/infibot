@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from vslbot import app
+from infibot import app
 from bot import util
 
 if __name__ == "__main__":
