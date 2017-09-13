@@ -34,8 +34,8 @@ http://docs.python-requests.org/en/master/user/quickstart/#make-a-request
     "events": [
         {
             "name": {
-                "text": "VSLBot Launch",
-                "html": "VSLBot Launch"
+                "text": "InfiBot Launch",
+                "html": "InfiBot Launch"
             },
             "description": {
                 "text": "With advent of technology and the rise of bots, you can now join communities and get assistance from the bots.",
